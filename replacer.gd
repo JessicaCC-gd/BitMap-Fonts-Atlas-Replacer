@@ -6,7 +6,7 @@ var scene: Node = preload("res://addons/bitmap_fonts_atlas_replacer/replacer.tsc
 
 const text_types : PackedStringArray = [".tscn", ".tres", ".gd", ".import"]
 const font_types : PackedStringArray = [".fnt", ".font"]
-const img_types : PackedStringArray = [".svg", ".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tres"]
+const img_types : PackedStringArray = [".svg", ".png", ".jpg", ".jpeg", ".webp", ".bmp"]
 const atlas_types : PackedStringArray = [".tres", ".res"]
 
 var button : Button
@@ -154,7 +154,7 @@ func replace_font_coords(font_path : String, res_path : String):
 	font_file.close()
 	
 	if content.count(font_path.get_file().trim_suffix("." + font_path.get_extension())) < 2:
-		utils.console_print("Image name inside fnt file does not correspond to font name. Font file: \"%s\" has not been adjusted" %font_path, Color.DARK_RED)
+		utils.console_print("Image name inside font file does not correspond to font name. Font file: \"%s\" has not been adjusted" %font_path, Color.DARK_RED)
 		return 1
 		
 	var img_name : String
@@ -243,30 +243,6 @@ func size_compare_reorganize(img_name : String, font_path : String, res_size : V
 			files_to_delete.append(img_file)
 	return OK
 
-
-	
-#func REORGANIZE():
-	#utils.console_print("Searching for image and atlas file matches")
-	#var matches := 0
-	#for res : AtlasTexture in atlas_data:
-		#var found_match := false
-		#for i in img_files.size():
-			#var img_name =  img_files[i].get_file().trim_suffix("." + img_files[i].get_extension())
-			#if res.resource_name == img_name:
-				#var img = img_data[i]
-				#if compare_button.button_pressed:
-					#if Vector2i(img.get_size()) != Vector2i(res.get_size()):
-						#utils.console_print("Found name matches, but dimentions didn't match. File \"%s\" not replaced" %img_files[i].get_file(), Color.DARK_GOLDENROD)
-						#break
-				#matches += 1
-				#replace(img, res.resource_path)
-				#found_match = true
-				#break
-		#if !found_match:
-			#utils.console_print("Didn't find a match for AtlasTexture \"%s\"" % res.resource_path, Color.DARK_RED)
-	#utils.console_print("Search for image and atlas file matches completed. Matched %d pairs" %matches)
-
-
 func replace(font_path : String, atlas_file : String):
 	var dir := DirAccess.open("res://")
 	var new_path := atlas_path + font_path.get_file()
@@ -301,7 +277,7 @@ func replace(font_path : String, atlas_file : String):
 	if dir.file_exists(font_path + ".import"):
 		dir.rename(font_path + ".import", new_path + ".import")
 	if edited_files:
-		utils.console_print("Moved %s to %s. Replaced paths in the following files: %s" %[font_path, new_path, edited_files], Color.TEAL)
+		utils.console_print("Moved \"%s\" to \"%s\". Replaced paths in the following files: %s" %[font_path, new_path, edited_files], Color.TEAL)
 	files_to_delete.append(atlas_file)
 
 func delete_files():
@@ -309,18 +285,18 @@ func delete_files():
 	
 	for file in files_to_delete:
 		if dir.remove(file) == OK:
-			utils.console_print("Deleted " + file, Color.DARK_SLATE_BLUE)
-		else: utils.console_print("Failed to delete " + file, Color.DARK_GOLDENROD)
+			utils.console_print("Deleted \"%s\"" %file, Color.DARK_SLATE_BLUE)
+		else: utils.console_print("Failed to delete \"%s\"" %file, Color.DARK_GOLDENROD)
 		
 		if dir.file_exists(file + ".import"):
 			if dir.remove(file + ".import") == OK:
-				utils.console_print("Deleted " + file + ".import", Color.DARK_SLATE_BLUE)
-			else: utils.console_print("Failed to delete " + file, Color.DARK_GOLDENROD)
+				utils.console_print("Deleted \"%s.import\"" %file, Color.DARK_SLATE_BLUE)
+			else: utils.console_print("Failed to delete \"%s.import\"" %file, Color.DARK_GOLDENROD)
 			
 		if dir.file_exists(file + ".uid"):
 			if dir.remove(file + ".uid") == OK:
-				utils.console_print("Deleted " + file + ".uid", Color.DARK_SLATE_BLUE)
-			else: utils.console_print("Failed to delete " + file, Color.DARK_GOLDENROD)
+				utils.console_print("Deleted \"%s.uid\"" %file, Color.DARK_SLATE_BLUE)
+			else: utils.console_print("Failed to delete \"%s.uid\"" %file, Color.DARK_GOLDENROD)
 		
 
 func export_log():
@@ -329,9 +305,9 @@ func export_log():
 	var file : FileAccess
 	file = FileAccess.open(save_path, FileAccess.WRITE)
 	if !file:
-		utils.console_print("Failed to overwrite log file " + save_path, Color.DARK_RED)
+		utils.console_print("Failed to overwrite log file \"%s\"" %save_path, Color.DARK_RED)
 		return
 	file.store_string(content)
 	file.close()
 	DirAccess.make_dir_absolute(save_path)
-	utils.console_print("Log file saved at " + OS.get_user_data_dir() + "/" + save_path.trim_prefix("user://"), Color.DARK_GREEN)
+	utils.console_print("Log file saved at \"%s\"" %[OS.get_user_data_dir() + "/" + save_path.trim_prefix("user://")], Color.DARK_GREEN)
