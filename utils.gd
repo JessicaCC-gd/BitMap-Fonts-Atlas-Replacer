@@ -5,13 +5,14 @@ func get_type_files(path: String, atlas_path : String, file_ext := "", files : A
 	var dir : = DirAccess.open(path)
 	if file_ext.begins_with("."): # get rid of starting dot if we used, for example ".tscn" instead of "tscn"
 		file_ext = file_ext.substr(1,file_ext.length()-1)
+	atlas_path = atlas_path.trim_suffix("/")
 	
 	if DirAccess.get_open_error() == OK:
 		dir.list_dir_begin()
 		var file_name = dir.get_next()
 		while file_name != "":
 			if dir.current_is_dir():
-				if dir.get_current_dir() == atlas_path:
+				if dir.get_current_dir() +"/"+ file_name == atlas_path:
 					file_name = dir.get_next()
 					continue
 				# recursion
@@ -26,10 +27,10 @@ func get_type_files(path: String, atlas_path : String, file_ext := "", files : A
 	else:
 		print("[get_type_files()] An error occurred when trying to access %s." % path)
 	return files
-
+	
 
 func find_dups(files : PackedStringArray, what : String = "file"):
-	console_print("Searching for duplicate %s names" %what)
+	console_print("Searching for duplicate \"%s\" names" %what)
 	var file_names = []
 	for f in files:
 		file_names.append(f.get_file())
@@ -51,7 +52,7 @@ func find_dups(files : PackedStringArray, what : String = "file"):
 			n = n + 1
 		if n >= file_names.size():
 			break
-	console_print("Searching for duplicate %s names completed. Found %d duplicates" %[what, dups])
+	console_print("Searching for duplicate \"%s\" names completed. Found %d duplicates" %[what, dups])
 	return files
 
 func console_print(text : String, color : Color = Color.WHITE):
